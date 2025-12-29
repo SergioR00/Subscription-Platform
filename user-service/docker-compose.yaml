@@ -1,0 +1,44 @@
+services:
+  db-1:
+    image: mariadb:11.4
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: ${GENERAL_PASSWORD}
+      MARIADB_DATABASE: user-service
+      MARIADB_ALLOW_EMPTY_PASSWORD: "no"
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - main-network
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8090:8080"
+    depends_on:
+      - db-1
+
+  user-service:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://db-1:3306/user-service?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${GENERAL_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${GENERAL_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.mariadb.jdbc.Driver
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MariaDBDialect
+    depends_on:
+      - db-1
+    networks:
+      - main-network
+
+volumes:
+  mariadb_data:
+
+networks:
+  main-network:
+    driver: bridge

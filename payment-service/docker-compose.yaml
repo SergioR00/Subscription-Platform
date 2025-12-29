@@ -1,0 +1,37 @@
+services:
+  db-3:
+    image: mariadb:11.4
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: ${GENERAL_PASSWORD}
+      MARIADB_DATABASE: payment-service
+      MARIADB_ALLOW_EMPTY_PASSWORD: "no"
+    ports:
+      - "3308:3306"
+    volumes:
+      - mariadb3_data:/var/lib/mysql
+    networks:
+      - payment-network
+
+  payment-service:
+    build: .
+    ports:
+      - "8082:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://db-3:3306/payment-service?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${GENERAL_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${GENERAL_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.mariadb.jdbc.Driver
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MariaDBDialect
+    depends_on:
+      - db-3
+    networks:
+      - payment-network
+
+volumes:
+  mariadb3_data:
+
+networks:
+  payment-network:
+    external: true
+    name: user-service_main-network
