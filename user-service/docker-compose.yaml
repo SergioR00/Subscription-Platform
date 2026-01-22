@@ -20,6 +20,8 @@ services:
       - "8090:8080"
     depends_on:
       - db-1
+    networks:
+      - main-network
 
   user-service:
     build: .

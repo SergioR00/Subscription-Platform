@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 
-function memberships(){
+function Memberships(){
     return(
         <div className="bg-black text-gray-100 min-h-screen">
             <main className="container mx-auto px-4 py-8">
@@ -135,4 +135,4 @@ function memberships(){
     )
 }
 
-export default memberships
+export default Memberships

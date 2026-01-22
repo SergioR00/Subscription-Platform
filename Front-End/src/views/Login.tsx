@@ -1,13 +1,29 @@
-import type { FormEvent } from "react";
+import axios from "axios";
+import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom"
 
-function login(){
+function Login(){
 
     const navigate = useNavigate();
 
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        navigate("/memberships");
+        axios.post("http://localhost:8080/login")
+        .then((response) => {
+            if (response.status === 200) {
+                console.log("¡Login confirmado por el servidor!");
+                navigate("/memberships");
+            }
+        })
+        .catch((error) => {
+            if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+                setErrorMessage("Invalid email or password. Please try again.");
+            } else {
+                setErrorMessage("Connection error.");
+            }
+        });
     };
 
     return(
@@ -20,6 +36,11 @@ function login(){
                     </div>
 
                     <form id="login-form" className="space-y-6">
+                        {errorMessage && (
+                            <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg text-sm mb-4 animate-pulse">
+                                {errorMessage}
+                            </div>
+                        )}
                         <div>
                             <label className="block mb-2 font-medium">Email</label>
                             <input type="email" id="login-email" className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" required></input>
@@ -53,4 +74,4 @@ function login(){
         </div>
     )
 }
-export default login
+export default Login
