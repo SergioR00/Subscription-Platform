@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 public class Suscription {
     private String email;
+    private SubscriptionLength subscriptionLength;
     private SubscriptionType subscriptionType;
-    private SubscriptionLevel subscriptionLevel;
 }

@@ -1,3 +1,3 @@
 package dev.sergio.payment_service.domain;
 
-public enum SubscriptionType {mensual, anual, premium}
+public enum SubscriptionType {student, normal}

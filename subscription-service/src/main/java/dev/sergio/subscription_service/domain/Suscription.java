@@ -20,10 +20,6 @@ public class Suscription {
     @Column(nullable = false)
     private SubscriptionType subscriptionType;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private SubscriptionLevel subscriptionLevel;
-
     @Builder.Default
     @Column(nullable = false)
     private boolean autoRenew = true;
@@ -51,9 +47,5 @@ public class Suscription {
             }
         };
         public abstract LocalDate calculateRenewalDate(LocalDate currentEndDate);
-    }
-
-    public enum SubscriptionLevel {
-        basic, medium, pro
     }
 }

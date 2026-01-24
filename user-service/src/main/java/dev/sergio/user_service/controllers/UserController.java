@@ -15,16 +15,16 @@ public class UserController {
 
     private final UserServicesI userServicesI;
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody LoginRequest request){
         if(request.email()==null || request.email().equals("") || request.password()==null || request.password().equals("")){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         User requestedUser = userServicesI.getUserByEmail(request.email());
-        if(requestedUser.getPassword().equals(request.password())) {
-            return ResponseEntity.ok(requestedUser);
+        if(requestedUser==null || !requestedUser.getPassword().equals(request.password())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        else return ResponseEntity.ok(requestedUser);
     }
 
     @PostMapping("/register")

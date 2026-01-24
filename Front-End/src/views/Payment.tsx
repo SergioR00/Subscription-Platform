@@ -1,13 +1,35 @@
+import axios from "axios";
 import type { FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Payment() {
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const email = location.state?.email;
+    const subLength = location.state?.subLength;
+    const subType = location.state?.subType;
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        navigate("/");
+        
+        axios.post("http://localhost:8082/addpayment", {
+            email,
+            subLength,
+            subType
+        })
+        .then((response) => {
+            if (response.status === 200) {
+                console.log("¡Suscripción añadida con éxito!");
+                navigate("/");
+            }
+        })
+        .catch((error) => {
+            console.error("Error en la petición:", error.message);
+            if (error.response) {
+                console.error("Detalles del servidor:", error.response.data);
+            }
+        });
     };
     
     return(

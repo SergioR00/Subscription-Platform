@@ -7,13 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -31,13 +27,14 @@ public class PaymentController {
         }
         return ResponseEntity.ok(payments);
     }
-    @PutMapping("/addpayment")
+
+    @PostMapping("/addpayment")
     public ResponseEntity<UserPayment> addPaymentFromUser(@RequestBody @NotNull AddPaymentRequest request){
         boolean exist = webClient.get().uri("http://user-service:8080/existUser/" + request.email()).retrieve().bodyToMono(Boolean.class).defaultIfEmpty(false).block();
         if(!exist){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        UserPayment userPayment = userPaymentServiceI.addPaymentToUser(request.email(),new Payment(request.subscriptionType(),request.subscriptionLevel()));
+        UserPayment userPayment = userPaymentServiceI.addPaymentToUser(request.email(),new Payment(request.subscriptionType(),request.subscriptionLength()));
         webClient.post()
                 .uri("http://subscription-service:8080/addSuscription")
                 .bodyValue(request)
@@ -55,6 +52,6 @@ public class PaymentController {
 
 record AddPaymentRequest(
         String email,
-        SubscriptionType subscriptionType,
-        SubscriptionLevel subscriptionLevel
+        SubscriptionLength subscriptionLength,
+        SubscriptionType subscriptionType
 ) {}

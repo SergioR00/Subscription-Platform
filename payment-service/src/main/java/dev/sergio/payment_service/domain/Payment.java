@@ -9,35 +9,34 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 @Setter
-@NoArgsConstructor // Necesario para JPA
-@AllArgsConstructor // Necesario para el @Builder de Lombok
+@NoArgsConstructor
+@AllArgsConstructor
 public class Payment {
     private LocalDateTime fecha;
     private SubscriptionType subscriptionType;
-    private SubscriptionLevel subscriptionLevel;
-    private int valor;
+    private SubscriptionLength subscriptionLength;
+    private float valor;
 
-    // CONSTRUCTOR PERSONALIZADO
-    public Payment(SubscriptionType type, SubscriptionLevel level) {
+    public Payment(SubscriptionType type, SubscriptionLength level) {
         this.fecha = LocalDateTime.now();
         this.subscriptionType = type;
-        this.subscriptionLevel = level;
+        this.subscriptionLength = level;
         this.valor = calculatePrice(level, type);
     }
 
-    private int calculatePrice(SubscriptionLevel level, SubscriptionType type) {
-        int base = switch (level) {
-            case basic -> 10;
-            case medium -> 30;
-            case pro -> 100;
+    private float calculatePrice(SubscriptionLength length, SubscriptionType type) {
+
+        float cost = switch (length) {
+            case monthly -> 4.99f;
+            case annual -> 49.95f;
         };
 
-        int multiplicador = switch (type) {
-            case mensual -> 1;
-            case anual -> 12;
-            case premium -> 30;
+        int divisor = switch (type) {
+            case student -> 2;
+            case normal -> 1;
         };
 
-        return base * multiplicador;
+
+        return cost/divisor;
     }
 }
